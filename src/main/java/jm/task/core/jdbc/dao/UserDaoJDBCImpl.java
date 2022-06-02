@@ -10,7 +10,7 @@ import java.util.List;
 public class UserDaoJDBCImpl implements UserDao {
 
     private final static Connection connection;
-
+// Идея настоятельно  рекомендует делать так
     static {
         try {
             connection = Util.getConnection();
@@ -22,7 +22,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String insertUser = "INSERT INTO usertabl (name, lastName, age) VALUES(?,?,?)";
     private static final String removeUser = "DELETE FROM usertabl WHERE id=?";
     private static final String getAll = "SELECT * FROM usertabl";
-    private static final String cleanAll = "DROP TABLE usertabl";
+    private static final String cleanAll = "TRUNCATE usertabl";
 
 
     public UserDaoJDBCImpl() {
@@ -40,7 +40,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE IF NOT EXISTS usertabl");
+            statement.executeUpdate("DROP TABLE IF EXISTS usertabl");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,9 +73,6 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(getAll)) {
-//            ResultSet resultSet = preparedStatement.executeQuery();
 
          try (ResultSet resultSet = connection.prepareStatement(getAll).executeQuery()) {
 
