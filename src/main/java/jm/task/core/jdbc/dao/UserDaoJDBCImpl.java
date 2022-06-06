@@ -7,17 +7,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoJDBCImpl implements UserDao {
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.MODULE;
 
-    private final static Connection connection;
-// Идея настоятельно  рекомендует делать так
-    static {
-        try {
-            connection = Util.getConnection();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+public class UserDaoJDBCImpl implements UserDao {
+    @SuppressWarnings("all")
+    private final static Connection connection = Util.getConnection();
 
     private static final String insertUser = "INSERT INTO usertabl (name, lastName, age) VALUES(?,?,?)";
     private static final String removeUser = "DELETE FROM usertabl WHERE id=?";
@@ -32,49 +27,35 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS usertabl" +
                     "(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), lastName VARCHAR(20), age INT)");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Таблица создана");
+        } catch (SQLException e) { }
     }
 
     public void dropUsersTable() {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS usertabl");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Таблица удалена");
+        } catch (SQLException e) { }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-//        connection.setAutoCommit(false);
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertUser)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-//            connection.rollback();
-        }
-        System.out.println("Юзер добавлен");
+        } catch (SQLException e) { }
     }
 
     public void removeUserById(long id) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(removeUser)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Все юзеры удалены");
+        } catch (SQLException e) { }
     }
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
 
-         try (ResultSet resultSet = connection.prepareStatement(getAll).executeQuery()) {
+        try (ResultSet resultSet = connection.prepareStatement(getAll).executeQuery()) {
 
             while (resultSet.next()) {
                 User user = new User(resultSet.getString("name"),
@@ -83,20 +64,14 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setId(resultSet.getLong("id"));
                 users.add(user);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Список юзеров получен");
-         return users;
+        } catch (SQLException e) { }
+        return users;
     }
-
 
     public void cleanUsersTable() {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(cleanAll);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }System.out.println("Таблица очищена");
+        } catch (SQLException e) { }
 
     }
 }
