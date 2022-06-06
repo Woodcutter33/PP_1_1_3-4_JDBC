@@ -28,7 +28,6 @@ public class UserDaoHibernateImpl implements UserDao {
                     "age INT)").executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -42,7 +41,6 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("DROP TABLE IF EXISTS usertabl").executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -56,7 +54,6 @@ public class UserDaoHibernateImpl implements UserDao {
             session.persist(new User(name, lastName, age));
             transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -73,7 +70,6 @@ public class UserDaoHibernateImpl implements UserDao {
             }
             transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -86,7 +82,6 @@ public class UserDaoHibernateImpl implements UserDao {
 // не могу понять, почему from подчеркивается
             return session.createQuery("from User", User.class).list();
         } catch (HibernateException e) {
-            e.printStackTrace();
         }
         return new ArrayList<>();
     }
@@ -98,7 +93,6 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("TRUNCATE TABLE usertabl").executeUpdate();
             transaction.commit();
         } catch (PersistenceException e) {
-            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
